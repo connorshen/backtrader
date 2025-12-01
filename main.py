@@ -90,7 +90,7 @@ class DollarCostAveraging(bt.Strategy):
 # 获取数据
 data = pd.read_csv("data.csv")
 data['datetime'] = pd.to_datetime(data['datetime'])
-one_year_ago = datetime.now() - timedelta(days=365 * 3)
+one_year_ago = datetime.now() - timedelta(days=365 * 1)
 data = data[data['datetime'] >= one_year_ago]
 data = data.set_index('datetime')
 float_cols = ['open', 'high', 'low', 'close', "volume"]
