@@ -106,14 +106,7 @@ def run_backtest():
     
     # 创建数据feed
     data_feed = bt.feeds.PandasData(
-        dataname=data,
-        datetime=None,  # 使用索引作为datetime
-        open='open',
-        high='high',
-        low='low',
-        close='close',
-        volume='volume',
-        openinterest=None
+        dataname=data
     )
     
     # 添加数据
@@ -144,7 +137,7 @@ def run_backtest():
     print('收益率:', strat.analyzers.returns.get_analysis()['rtot'])
     
     # 绘制图表
-    # cerebro.plot()
+    cerebro.plot()
 
 if __name__ == '__main__':
     run_backtest()
