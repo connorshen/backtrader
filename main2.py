@@ -123,7 +123,7 @@ def run_backtest():
     cerebro.broker.set_cash(100000)
     
     # 设置佣金
-    cerebro.broker.setcommission(commission=0.001)  # 0.1%佣金
+    cerebro.broker.setcommission(commission=0)  # 0.1%佣金
     
     # 添加分析器
     cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
@@ -139,12 +139,12 @@ def run_backtest():
     strat = results[0]
     print('最终资金: %.2f' % cerebro.broker.getvalue())
     print('总投入资金: %.2f' % strat.cash_invested)
-    print('夏普比率:', strat.analyzers.sharpe.get_analysis())
-    print('最大回撤:', strat.analyzers.drawdown.get_analysis())
-    print('收益率:', strat.analyzers.returns.get_analysis())
+    print('夏普比率:', strat.analyzers.sharpe.get_analysis()['sharperatio'])
+    print('最大回撤:', strat.analyzers.drawdown.get_analysis()['max']['drawdown'])
+    print('收益率:', strat.analyzers.returns.get_analysis()['rtot'])
     
     # 绘制图表
-    cerebro.plot()
+    # cerebro.plot()
 
 if __name__ == '__main__':
     run_backtest()
