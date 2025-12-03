@@ -199,7 +199,7 @@ def run_backtest():
     # 准备数据（使用您提供的数据处理代码）
     data = pd.read_csv("data.csv")
     data['datetime'] = pd.to_datetime(data['datetime'])
-    one_year_ago = datetime.now() - timedelta(days=365*2)
+    one_year_ago = datetime.now() - timedelta(days=365*3)
     data = data[data['datetime'] >= one_year_ago]
     data = data.set_index('datetime')
     float_cols = ['open', 'high', 'low', 'close', "volume"]
