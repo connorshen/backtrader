@@ -16,7 +16,6 @@ class HighestPointStrategy(bt.Strategy):
         self.cash_invested = 0  # 已投入现金总额
         self.total_shares = 0  # 总持股数量
         self.total_investments = 0  # 总投资次数
-        self.investment_records = []  # 记录每次投资的信息
         
     def start(self):
         # 初始投资
@@ -89,21 +88,6 @@ class HighestPointStrategy(bt.Strategy):
                 unrealized_pnl = current_value - invested_value
                 pnl_percentage = (unrealized_pnl / invested_value) * 100 if invested_value > 0 else 0
                 
-                # 记录投资信息
-                record = {
-                    'type': '买入',
-                    '日期': self.data.datetime.date(0),
-                    '价格': order.executed.price,
-                    '数量': order.executed.size,
-                    '金额': order.executed.price * order.executed.size,
-                    '总持股': self.total_shares,
-                    '总投资': self.cash_invested,
-                    '持仓市值': current_value,
-                    '持仓收益': unrealized_pnl,
-                    '收益率%': pnl_percentage
-                }
-                self.investment_records.append(record)
-                
                 print(f"\n=== 第{self.total_investments}次投资 ===")
                 print(f"买入完成 - 价格: {order.executed.price:.2f}, "
                       f"数量: {order.executed.size:.2f}, "
@@ -143,17 +127,6 @@ class HighestPointStrategy(bt.Strategy):
         print(f"最终持仓收益: {final_unrealized_pnl:+.2f} ({final_pnl_percentage:+.2f}%)")
         print(f"剩余现金: {self.broker.get_cash():.2f}")
         print(f"账户总值: {self.broker.getvalue():.2f}")
-        
-        # 输出每次投资的详细记录
-        if self.investment_records:
-            print("\n投资记录详情:")
-            print("-"*100)
-            print(f"{'类型':<6} {'日期':<12} {'价格':<8} {'数量':<8} {'金额':<10} {'总持股':<10} {'总投资':<10} {'持仓市值':<12} {'持仓收益':<12} {'收益率%':<10}")
-            print("-"*100)
-            for record in self.investment_records:
-                print(f"{record['type']:<6} {record['日期']} {record['价格']:<8.2f} {record['数量']:<8.2f} "
-                      f"{record['金额']:<10.2f} {record['总持股']:<10.2f} {record['总投资']:<10.2f} "
-                      f"{record['持仓市值']:<12.2f} {record['持仓收益']:<12.2f} {record['收益率%']:<10.2f}")
 
 # 数据准备和回测执行
 def run_backtest():
