@@ -6,7 +6,7 @@ class HighestPointStrategy(bt.Strategy):
     params = (
         ('drop_threshold', 0.03),  # 下跌阈值 3%
         ('rise_threshold', 0.04),  # 上涨阈值 4%
-        ('initial_investment', 10000),  # 初始投资金额
+        ('initial_investment', 5000),  # 初始投资金额
         ('additional_investment', 5000),  # 每次补仓金额
         ('sell_amount', 5000),  # 每次卖出金额
     )
@@ -35,7 +35,6 @@ class HighestPointStrategy(bt.Strategy):
         
         # 设置初始最高点和买入后最低点
         self.highest_price = price
-        self.lowest_price_after_buy = price
         self.last_buy_price = price
         self.sell_base_price = price  # 设置卖出基准价为买入价
         self.total_shares = size
