@@ -187,10 +187,6 @@ class HighestPointStrategy(bt.Strategy):
         print(f"最终持仓收益: {final_unrealized_pnl:+.2f} ({final_pnl_percentage:+.2f}%)")
         print(f"剩余现金: {self.broker.get_cash():.2f}")
         print(f"账户总值: {self.broker.getvalue():.2f}")
-        
-        # 计算总收益率
-        total_return = (self.broker.getvalue() - 100000) / 100000 * 100
-        print(f"总收益率: {total_return:+.2f}%")
 
 # 数据准备和回测执行
 def run_backtest():
