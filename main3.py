@@ -20,7 +20,6 @@ class HighestPointStrategy(bt.Strategy):
         self.total_investments = 0  # 总投资次数
         self.total_sells = 0  # 总卖出次数
         self.sell_base_price = None  # 卖出计算的基准价格
-        self.last_sell_price = None  # 上次卖出价格
         
     def start(self):
         # 初始投资
@@ -35,7 +34,6 @@ class HighestPointStrategy(bt.Strategy):
         
         # 设置初始最高点和买入后最低点
         self.highest_price = price
-        self.last_buy_price = price
         self.sell_base_price = price  # 设置卖出基准价为买入价
         self.total_shares = size
         self.total_investments = 1
@@ -78,7 +76,6 @@ class HighestPointStrategy(bt.Strategy):
                 self.highest_price = current_price
                 # 重置卖出基准价为当前价格
                 self.sell_base_price = current_price
-                self.last_buy_price = current_price
                 return  # 买入后直接返回，避免同时触发买入和卖出
         
         # 2. 上涨卖出逻辑
