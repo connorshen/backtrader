@@ -13,7 +13,6 @@ class HighestPointStrategy(bt.Strategy):
     
     def __init__(self):
         self.highest_price = None  # 记录最高点价格
-        self.lowest_price_after_buy = None  # 记录买入后的最低点
         self.last_buy_price = None  # 记录上次买入价格
         self.order = None
         self.cash_invested = 0  # 已投入现金总额
@@ -57,10 +56,6 @@ class HighestPointStrategy(bt.Strategy):
         if self.highest_price is None or current_price > self.highest_price:
             self.highest_price = current_price
         
-        # 更新买入后最低点（用于上涨判断）
-        if self.lowest_price_after_buy is None or current_price < self.lowest_price_after_buy:
-            self.lowest_price_after_buy = current_price
-        
         # 1. 下跌补仓逻辑
         if self.highest_price > 0:
             drop_percentage = (self.highest_price - current_price) / self.highest_price
@@ -82,8 +77,6 @@ class HighestPointStrategy(bt.Strategy):
                 
                 # 重置最高点为当前价格（从补仓后重新计算）
                 self.highest_price = current_price
-                # 重置买入后最低点为当前价格
-                self.lowest_price_after_buy = current_price
                 # 重置卖出基准价为当前价格
                 self.sell_base_price = current_price
                 self.last_buy_price = current_price
@@ -199,7 +192,7 @@ def run_backtest():
     # 准备数据（使用您提供的数据处理代码）
     data = pd.read_csv("data.csv")
     data['datetime'] = pd.to_datetime(data['datetime'])
-    one_year_ago = datetime.now() - timedelta(days=365*3)
+    one_year_ago = datetime.now() - timedelta(days=365*1)
     data = data[data['datetime'] >= one_year_ago]
     data = data.set_index('datetime')
     float_cols = ['open', 'high', 'low', 'close', "volume"]
