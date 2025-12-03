@@ -27,8 +27,10 @@ class SmartStrategy(bt.Strategy):
         
         # 设置初始最高点和买入后最低点
         self.highest_price = price
+        current_date = self.data.datetime.date(0) 
         
         print(f"初始投资: {initial_cash:.2f}元, "
+              f"日期: {current_date}, "
               f"价格: {price:.2f}, "
               f"股数: {size:.2f}")
     
@@ -38,6 +40,7 @@ class SmartStrategy(bt.Strategy):
             return
             
         current_price = self.data.close[0]
+        current_date = self.data.datetime.date(0) 
         
         # 更新最高点（用于下跌判断）
         if self.highest_price is None or current_price > self.highest_price:
@@ -58,6 +61,7 @@ class SmartStrategy(bt.Strategy):
                 self.order = self.buy(size=size)
                 
                 print(f"触发补仓条件 - 当前价格: {current_price:.2f}, "
+                      f"日期: {current_date}, "
                       f"最高点: {self.highest_price:.2f}, "
                       f"下跌幅度: {drop_percentage*100:.2f}%")
                 
