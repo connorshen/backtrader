@@ -2,7 +2,7 @@ import backtrader as bt
 import pandas as pd
 from datetime import datetime, timedelta
 
-class HighestPointStrategy(bt.Strategy):
+class SmartStrategy(bt.Strategy):
     params = (
         ('drop_threshold', 0.03),  # 下跌阈值 3%
         ('rise_threshold', 0.04),  # 上涨阈值 4%
@@ -80,7 +80,7 @@ def run_backtest():
     cerebro = bt.Cerebro()
     
     # 添加策略
-    cerebro.addstrategy(HighestPointStrategy)
+    cerebro.addstrategy(SmartStrategy)
     
     # 准备数据（使用您提供的数据处理代码）
     data = pd.read_csv("data.csv")
@@ -93,14 +93,7 @@ def run_backtest():
     
     # 创建数据feed
     data_feed = bt.feeds.PandasData(
-        dataname=data,
-        datetime=None,  # 因为索引已经是datetime
-        open=0,
-        high=1,
-        low=2,
-        close=3,
-        volume=4,
-        openinterest=-1
+        dataname=data
     )
     
     # 添加数据
