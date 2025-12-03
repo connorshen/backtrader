@@ -12,7 +12,7 @@ class SmartStrategy(bt.Strategy):
     )
     
     def __init__(self):
-        self.highest_price = None  # 记录最高点价格
+        self.base_buy_price = None  # 记录最高点价格
         self.order = None
         
     def start(self):
@@ -26,7 +26,7 @@ class SmartStrategy(bt.Strategy):
         self.buy(size=size)
         
         # 设置初始最高点和买入后最低点
-        self.highest_price = price
+        self.base_buy_price = price
         current_date = self.data.datetime.date(0) 
         
         print(f"初始投资: {initial_cash:.2f}元, "
@@ -43,12 +43,12 @@ class SmartStrategy(bt.Strategy):
         current_date = self.data.datetime.date(0) 
         
         # 更新最高点（用于下跌判断）
-        if self.highest_price is None or current_price > self.highest_price:
-            self.highest_price = current_price
+        if self.base_buy_price is None or current_price > self.base_buy_price:
+            self.base_buy_price = current_price
         
         # 1. 下跌补仓逻辑
-        if self.highest_price > 0:
-            drop_percentage = (self.highest_price - current_price) / self.highest_price
+        if self.base_buy_price > 0:
+            drop_percentage = (self.base_buy_price - current_price) / self.base_buy_price
             
             # 如果下跌超过阈值且现金充足，则补仓
             if (drop_percentage >= self.params.drop_threshold and 
@@ -62,11 +62,11 @@ class SmartStrategy(bt.Strategy):
                 
                 print(f"触发补仓条件 - 当前价格: {current_price:.2f}, "
                       f"日期: {current_date}, "
-                      f"最高点: {self.highest_price:.2f}, "
+                      f"最高点: {self.base_buy_price:.2f}, "
                       f"下跌幅度: {drop_percentage*100:.2f}%")
                 
                 # 重置最高点为当前价格（从补仓后重新计算）
-                self.highest_price = current_price
+                self.base_buy_price = current_price
                 return
     
     def notify_order(self, order):
