@@ -5,10 +5,8 @@ from datetime import datetime, timedelta
 class SmartStrategy(bt.Strategy):
     params = (
         ('drop_threshold', 0.03),  # 下跌阈值 3%
-        ('rise_threshold', 0.04),  # 上涨阈值 4%
-        ('initial_investment', 5000),  # 初始投资金额
-        ('additional_investment', 5000),  # 每次补仓金额
-        ('sell_amount', 5000),  # 每次卖出金额
+        ('initial_amount', 5000),  # 初始投资金额
+        ('additional_amount', 5000),  # 每次补仓金额
     )
     
     def __init__(self):
@@ -17,7 +15,7 @@ class SmartStrategy(bt.Strategy):
         
     def start(self):
         # 初始投资
-        initial_cash = self.params.initial_investment
+        initial_cash = self.params.initial_amount
         self.broker.set_cash(self.broker.get_cash() - initial_cash)
         
         # 计算初始买入股数
@@ -52,10 +50,10 @@ class SmartStrategy(bt.Strategy):
             
             # 如果下跌超过阈值且现金充足，则补仓
             if (drop_percentage >= self.params.drop_threshold and 
-                self.broker.get_cash() >= self.params.additional_investment):
+                self.broker.get_cash() >= self.params.additional_amount):
                 
                 # 计算补仓股数
-                size = self.params.additional_investment / current_price
+                size = self.params.additional_amount / current_price
                 
                 # 执行买入订单
                 self.order = self.buy(size=size)
