@@ -21,17 +21,17 @@ class SmartStrategy(bt.Strategy):
         self.broker.set_cash(self.broker.get_cash() - initial_cash)
         
         # 计算初始买入股数
-        price = self.data.close[0]
-        size = initial_cash / price
+        current_price = self.data.close[0]
+        size = initial_cash / current_price
         self.buy(size=size)
         
         # 设置初始最高点和买入后最低点
-        self.base_buy_price = price
+        self.base_buy_price = current_price
         current_date = self.data.datetime.date(0) 
         
         print(f"初始投资: {initial_cash:.2f}元, "
               f"日期: {current_date}, "
-              f"价格: {price:.2f}, "
+              f"价格: {current_price:.2f}, "
               f"股数: {size:.2f}")
     
     def next(self):
@@ -64,8 +64,6 @@ class SmartStrategy(bt.Strategy):
                       f"日期: {current_date}, "
                       f"最高点: {self.base_buy_price:.2f}, "
                       f"下跌幅度: {drop_percentage*100:.2f}%")
-                
-                # 重置最高点为当前价格（从补仓后重新计算）
                 self.base_buy_price = current_price
                 return
     
@@ -74,7 +72,7 @@ class SmartStrategy(bt.Strategy):
             return
                 
         if order.status in [order.Canceled, order.Margin, order.Rejected]:
-            print(f"订单取消/保证金不足/被拒绝 - {order.status}")
+            print(f"订单被拒绝 - {order.status}")
             
         self.order = None
 
