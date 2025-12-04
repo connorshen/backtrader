@@ -58,19 +58,39 @@ class SmartStrategy(bt.Strategy):
                 # 执行买入订单
                 self.order = self.buy(size=size)
                 
-                print(f"触发补仓条件 - 当前价格: {current_price:.2f}, "
-                      f"日期: {current_date}, "
-                      f"最高点: {self.base_buy_price:.2f}, "
-                      f"下跌幅度: {drop_percentage*100:.2f}%")
+                # print(f"触发补仓条件 - 当前价格: {current_price:.2f}, "
+                #       f"日期: {current_date}, "
+                #       f"最高点: {self.base_buy_price:.2f}, "
+                #       f"下跌幅度: {drop_percentage*100:.2f}%")
                 self.base_buy_price = current_price
                 return
     
     def notify_order(self, order):
+        current_date = self.data.datetime.date(0)
+        
         if order.status in [order.Submitted, order.Accepted]:
             return
                 
-        if order.status in [order.Canceled, order.Margin, order.Rejected]:
-            print(f"订单被拒绝 - {order.status}")
+        if order.status in [order.Completed]:
+            if order.isbuy():
+                # 买入订单完成
+                cost = order.executed.price * order.executed.size
+                print(f"买入成功 - 日期: {current_date}, "
+                      f"价格: {order.executed.price:.2f}, "
+                      f"股数: {order.executed.size:.2f}, "
+                      f"成本: {cost:.2f}元, "
+                      f"剩余现金: {self.broker.get_cash():.2f}")
+            elif order.issell():
+                # 卖出订单完成
+                revenue = order.executed.price * order.executed.size
+                print(f"卖出成功 - 日期: {current_date}, "
+                      f"价格: {order.executed.price:.2f}, "
+                      f"股数: {order.executed.size:.2f}, "
+                      f"收入: {revenue:.2f}元, "
+                      f"剩余现金: {self.broker.get_cash():.2f}")
+                
+        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
+            print(f"订单失败 - {order.status}, 日期: {current_date}")
             
         self.order = None
 
