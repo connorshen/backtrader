@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 
 class SmartStrategy(bt.Strategy):
     params = (
-        ('drop_threshold', 0.02),  # 下跌阈值 3%
-        ('additional_amount', 10000),  # 每次补仓金额
+        ('drop_threshold', 0.03),  # 下跌阈值 3%
+        ('additional_amount', 5000),  # 每次补仓金额
     )
     
     def __init__(self):
