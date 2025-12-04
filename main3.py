@@ -5,32 +5,12 @@ from datetime import datetime, timedelta
 class SmartStrategy(bt.Strategy):
     params = (
         ('drop_threshold', 0.03),  # 下跌阈值 3%
-        ('initial_amount', 5000),  # 初始投资金额
         ('additional_amount', 5000),  # 每次补仓金额
     )
     
     def __init__(self):
         self.base_buy_price = None  # 记录最高点价格
         self.order = None
-        
-    def start(self):
-        # 初始投资
-        initial_cash = self.params.initial_amount
-        self.broker.set_cash(self.broker.get_cash() - initial_cash)
-        
-        # 计算初始买入股数
-        current_price = self.data.close[0]
-        size = initial_cash / current_price
-        self.buy(size=size)
-        
-        # 设置初始最高点和买入后最低点
-        self.base_buy_price = current_price
-        current_date = self.data.datetime.date(0) 
-        
-        print(f"初始投资: {initial_cash:.2f}元, "
-              f"日期: {current_date}, "
-              f"价格: {current_price:.2f}, "
-              f"股数: {size:.2f}")
     
     def next(self):
         # 如果当前有订单未完成，则返回
@@ -51,17 +31,8 @@ class SmartStrategy(bt.Strategy):
             # 如果下跌超过阈值且现金充足，则补仓
             if (drop_percentage >= self.params.drop_threshold and 
                 self.broker.get_cash() >= self.params.additional_amount):
-                
-                # 计算补仓股数
                 size = self.params.additional_amount / current_price
-                
-                # 执行买入订单
                 self.order = self.buy(size=size)
-                
-                # print(f"触发补仓条件 - 当前价格: {current_price:.2f}, "
-                #       f"日期: {current_date}, "
-                #       f"最高点: {self.base_buy_price:.2f}, "
-                #       f"下跌幅度: {drop_percentage*100:.2f}%")
                 self.base_buy_price = current_price
                 return
     
@@ -110,6 +81,7 @@ def run_backtest():
     data = data.set_index('datetime')
     float_cols = ['open', 'high', 'low', 'close', "volume"]
     data[float_cols] = data[float_cols].apply(pd.to_numeric, downcast='float')
+    print(data.head())
     
     # 创建数据feed
     data_feed = bt.feeds.PandasData(
